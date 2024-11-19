@@ -101,79 +101,79 @@ However, static analysis faces challenges due to techniques used to hide or obfu
 
 The **Ember** dataset contains several key components:
 
-1. **File Information**
+#### 1. File Information
    - **SHA-256 Hash**: A unique identifier for each file, allowing researchers to trace back to the original binary or find additional metadata through services like VirusShare or VirusTotal.
    - **Coarse Time Information**: Indicates the approximate month the file was first observed.
 
-2. **Labels**
+#### 2. Labels
    - `0`: Benign file.
    - `1`: Malicious file.
    - `-1`: Unlabeled file (for semi-supervised learning research).
-### 3. Feature Groups
+
+#### 3. Feature Groups
 
 The dataset contains eight groups of raw features, which include:
 
 #### 1. Parsed Values
 These are extracted directly from the structure of the PE file.
 
-- **General File Information**:
-  - File size, virtual size, and PE header information.
-  - Number of imported/exported functions.
-  - Presence of debug sections, thread local storage, or digital signatures.
+1. **General File Information**:
+   - File size, virtual size, and PE header information.
+   - Number of imported/exported functions.
+   - Presence of debug sections, thread local storage, or digital signatures.
 
-- **Header Information**:
-  - **COFF Header**: Timestamp, target machine, and characteristics.
-  - **Optional Header**: Subsystem, DLL characteristics, and file magic (e.g., "PE32").
-  - Versions (image, linker, system) and sizes (code, headers, commit).
+2. **Header Information**:
+   - **COFF Header**: Timestamp, target machine, and characteristics.
+   - **Optional Header**: Subsystem, DLL characteristics, and file magic (e.g., "PE32").
+   - Versions (image, linker, system) and sizes (code, headers, commit).
 
-- **Imported Functions**:
-  - Libraries and functions parsed from the import address table.
-  - **Feature Hashing**:
-    - Libraries: 256 bins.
-    - Function names (e.g., kernel32.dll:CreateFileMappingA): 1024 bins.
+3. **Imported Functions**:
+   - Libraries and functions parsed from the import address table.
+   - **Feature Hashing**:
+     - Libraries: 256 bins.
+     - Function names (e.g., kernel32.dll:CreateFileMappingA): 1024 bins.
 
-- **Exported Functions**:
-  - List of exported functions.
-  - **Feature Hashing**:
-    - Summarized into 128 bins.
+4. **Exported Functions**:
+   - List of exported functions.
+   - **Feature Hashing**:
+     - Summarized into 128 bins.
 
-- **Section Information**:
-  - Section name, size, entropy, virtual size, and characteristics.
-  - **Feature Hashing**:
-    - Section values: 50 bins each for size, entropy, and virtual size.
-    - Section characteristics: Hashed for entry point.
+5. **Section Information**:
+   - Section name, size, entropy, virtual size, and characteristics.
+   - **Feature Hashing**:
+     - Section values: 50 bins each for size, entropy, and virtual size.
+     - Section characteristics: Hashed for entry point.
 
 #### 2. Format-Agnostic Histograms
 These are generic data representations of the binary data.
 
-- **Byte Histogram**:
-  - Counts of each byte value (256 bins).
-  - Normalized to a distribution during vectorization.
+6. **Byte Histogram**:
+   - Counts of each byte value (256 bins).
+   - Normalized to a distribution during vectorization.
 
-- **Byte-Entropy Histogram**:
-  - Approximates joint distribution of entropy (H) and byte values (X).
-  - Calculated using a sliding window (size: 2048, step: 1024).
-  - Quantized into a 16 × 16 bin matrix and normalized.
+7. **Byte-Entropy Histogram**:
+   - Approximates joint distribution of entropy (H) and byte values (X).
+   - Calculated using a sliding window (size: 2048, step: 1024).
+   - Quantized into a 16 × 16 bin matrix and normalized.
 
-- **String Information**:
-  - Statistics of printable strings (≥5 characters).
-  - Number of strings, average length, and histogram of printable characters.
-  - Entropy across strings.
-  - **Specific Patterns**:
-    - Paths starting with `C:\`.
-    - URLs (http://, https://).
-    - Registry keys (HKEY_).
-    - Presence of `MZ` (indicates PE dropper or bundled executables).
+8. **String Information**:
+   - Statistics of printable strings (≥5 characters).
+   - Number of strings, average length, and histogram of printable characters.
+   - Entropy across strings.
+   - **Specific Patterns**:
+     - Paths starting with `C:\`.
+     - URLs (http://, https://).
+     - Registry keys (HKEY_).
+     - Presence of `MZ` (indicates PE dropper or bundled executables).
 
-
-4. **Research Flexibility**
-   - **Raw Features**: Provided for interpretability and custom feature engineering.
+#### 4. Research Flexibility
+- **Raw Features**: Provided features for further research and exploration.
    - **Feature Vectorization**: Code included to convert raw features into numeric vectors for machine learning models.
 
-5. **Temporal Splits**
+#### 5. Temporal Splits
    The dataset is split into training and test sets based on time, simulating real-world malware evolution. This helps test models’ robustness to generational changes.
 
-6. **Source Validation**
+#### 6. Source Validation
    - Benign files are verified on VirusTotal, with no malware detection at the time of collection.
    - Malicious files are verified on VirusTotal with detection by more than 40 vendors.
 
