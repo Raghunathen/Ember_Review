@@ -109,15 +109,62 @@ The **Ember** dataset contains several key components:
    - `0`: Benign file.
    - `1`: Malicious file.
    - `-1`: Unlabeled file (for semi-supervised learning research).
+### 3. Feature Groups
 
-3. **Feature Groups**
-   The dataset contains eight groups of raw features, including:
-   - **General File Information**: File size, PE header info, number of imported/exported functions, and more.
-   - **Header Information**: COFF and Optional header details.
-   - **Imported Functions**: Libraries and functions parsed from the import address table.
-   - **Section Information**: Section name, size, entropy, and characteristics.
-   - **Format-Agnostic Histograms**: Byte and entropy histograms.
-   - **String Information**: Statistics on printable strings and specific patterns like URLs, registry keys, and file paths.
+The dataset contains eight groups of raw features, which include:
+
+#### 1. Parsed Values
+These are extracted directly from the structure of the PE file.
+
+- **General File Information**:
+  - File size, virtual size, and PE header information.
+  - Number of imported/exported functions.
+  - Presence of debug sections, thread local storage, or digital signatures.
+
+- **Header Information**:
+  - **COFF Header**: Timestamp, target machine, and characteristics.
+  - **Optional Header**: Subsystem, DLL characteristics, and file magic (e.g., "PE32").
+  - Versions (image, linker, system) and sizes (code, headers, commit).
+
+- **Imported Functions**:
+  - Libraries and functions parsed from the import address table.
+  - **Feature Hashing**:
+    - Libraries: 256 bins.
+    - Function names (e.g., kernel32.dll:CreateFileMappingA): 1024 bins.
+
+- **Exported Functions**:
+  - List of exported functions.
+  - **Feature Hashing**:
+    - Summarized into 128 bins.
+
+- **Section Information**:
+  - Section name, size, entropy, virtual size, and characteristics.
+  - **Feature Hashing**:
+    - Section values: 50 bins each for size, entropy, and virtual size.
+    - Section characteristics: Hashed for entry point.
+
+#### 2. Format-Agnostic Histograms
+These are generic data representations of the binary data.
+
+- **Byte Histogram**:
+  - Counts of each byte value (256 bins).
+  - Normalized to a distribution during vectorization.
+
+- **Byte-Entropy Histogram**:
+  - Approximates joint distribution of entropy (H) and byte values (X).
+  - Calculated using a sliding window (size: 2048, step: 1024).
+  - Quantized into a 16 × 16 bin matrix and normalized.
+
+- **String Information**:
+  - Statistics of printable strings (≥5 characters).
+  - Number of strings, average length, and histogram of printable characters.
+  - Entropy across strings.
+  - **Specific Patterns**:
+    - Paths starting with `C:\`.
+    - URLs (http://, https://).
+    - Registry keys (HKEY_).
+    - Presence of `MZ` (indicates PE dropper or bundled executables).
+
 
 4. **Research Flexibility**
    - **Raw Features**: Provided for interpretability and custom feature engineering.
