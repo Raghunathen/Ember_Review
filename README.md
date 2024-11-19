@@ -147,6 +147,6 @@ The model achieves an **ROC AUC score** of over 0.9991, indicating excellent per
 - **J48 Model**: Showed poor performance with high false positives and negatives.
 - **MalConv**: This deep learning model performed slightly worse than LightGBM, with an ROC AUC of 0.99821, and took much longer to train (10 days).
 
-### 5. Key Takeaways
+### Key Takeaways
 - The **LightGBM** model with parsed features is more efficient and effective than more complex models like **MalConv**, showing that domain-specific features (e.g., file imports/exports) are more useful for this task than using raw binary data alone.
 
