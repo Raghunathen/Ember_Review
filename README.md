@@ -1,4 +1,4 @@
-# Ember - Elastic Malware Benchmark for Empowering Researchers
+# EMBER - Elastic Malware Benchmark for Empowering Researchers
 aka Endgame Malware BEnchmark for Research
 
 ## Overview
